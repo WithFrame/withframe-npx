@@ -1,0 +1,55 @@
+# Node
+node_modules/
+.npm/
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+
+# Test coverage
+coverage/
+
+# Misc
+*.local
+*.swp
+*.swo
+
+# TypeScript
+*.d.ts
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Mac
+.AppleDouble
+.LSOverride
+
+# Others
+.idea/
+*.iml
+
+# WithFrame CLI
+withframe.config.json
+
+# Generated component directories
+components
+src/components
+app/components
