@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import type { Command } from 'commander';
-import { AuthService } from '@/api/authService';
+import { AuthService } from '@/api/auth-service';
 import { loadWithFrameConfig } from '@/lib/config';
-import { BaseCommand } from '@/core/BaseCommand';
+import { BaseCommand } from '@/core/base-command';
 import { TokenStore } from '@/lib/tokenStore';
 
 export class LoginCommand extends BaseCommand {

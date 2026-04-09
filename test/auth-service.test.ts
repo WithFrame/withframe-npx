@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import open from 'open';
-import { AuthService } from '@/api/authService';
-import { RegistryClient } from '@/api/RegistryClient';
-import { DEFAULT_REGISTRY_URL } from '@/constants/cli';
+import { AuthService } from '@/api/auth-service';
+import { RegistryClient } from '@/api/registry-client';
+import { DEFAULT_REGISTRY_URL } from '@/constants';
 import { TokenStore } from '@/lib/tokenStore';
 import { delay } from '@/utils/delay';
 

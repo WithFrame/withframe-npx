@@ -1,6 +1,6 @@
 import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { CONFIG_FILE_NAME } from '@/constants/cli';
+import { CONFIG_FILE_NAME } from '@/constants';
 import type { WithFrameConfig } from '@/types';
 import { normalizeProjectTarget, normalizeText } from './normalize';
 

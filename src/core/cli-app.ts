@@ -1,5 +1,5 @@
 import type { Command } from 'commander';
-import type { CommandRegistry } from '@/core/CommandRegistry';
+import type { CommandRegistry } from '@/core/command-registry';
 import { printQuickStart } from '@/utils/output';
 
 export class CliApp {

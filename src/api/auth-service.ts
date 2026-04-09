@@ -1,5 +1,5 @@
 import open from 'open';
-import { RegistryClient } from '@/api/RegistryClient';
+import { RegistryClient } from '@/api/registry-client';
 import { TokenStore } from '@/lib/tokenStore';
 import type { LoginOptions } from '@/types';
 import { delay } from '@/utils/delay';

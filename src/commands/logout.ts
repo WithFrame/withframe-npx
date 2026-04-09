@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { BaseCommand } from '@/core/BaseCommand';
+import { BaseCommand } from '@/core/base-command';
 import { TokenStore } from '@/lib/tokenStore';
 
 export class LogoutCommand extends BaseCommand {

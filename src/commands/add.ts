@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import type { Command } from 'commander';
-import { ComponentService } from '@/api/componentService';
-import { BaseCommand } from '@/core/BaseCommand';
+import { ComponentService } from '@/api/component-service';
+import { BaseCommand } from '@/core/base-command';
 import { confirm } from '@/lib/prompt';
 import type { AddOptions, AddResult } from '@/types';
 import { printAddResult } from '@/utils/output';

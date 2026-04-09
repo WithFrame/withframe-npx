@@ -1,5 +1,5 @@
 import type { Command } from 'commander';
-import type { BaseCommand } from '@/core/BaseCommand';
+import type { BaseCommand } from '@/core/base-command';
 
 export class CommandRegistry {
   constructor(private readonly commands: BaseCommand[]) {}

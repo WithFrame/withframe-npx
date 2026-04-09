@@ -1,5 +1,5 @@
 import { writeFile } from 'node:fs/promises';
-import { CONFIG_FILE_NAME } from '@/constants/cli';
+import { CONFIG_FILE_NAME } from '@/constants';
 import { getConfigFilePath } from '@/lib/config';
 import {
   detectProjectTarget,

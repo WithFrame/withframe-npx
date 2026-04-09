@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import type { Command } from 'commander';
-import { InitService } from '@/api/initService';
-import { BaseCommand } from '@/core/BaseCommand';
+import { InitService } from '@/api/init-service';
+import { BaseCommand } from '@/core/base-command';
 import { normalizeText } from '@/lib/normalize';
 
 interface InitCommandOptions {

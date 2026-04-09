@@ -1,4 +1,4 @@
-import { COLORS } from '@/constants/cli';
+import { COLORS } from '@/constants';
 import chalk from 'chalk';
 
 const BANNER = `

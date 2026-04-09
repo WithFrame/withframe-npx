@@ -1,7 +1,7 @@
 import { mkdir, readFile, unlink, writeFile, chmod } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { AUTH_FILE_NAME, TOKEN_ENV_KEY, WITHFRAME_DIR } from '@/constants/cli';
+import { AUTH_FILE_NAME, TOKEN_ENV_KEY, WITHFRAME_DIR } from '@/constants';
 import type { AuthFilePayload, AuthTokenResult } from '@/types';
 
 // Checks that a value is a valid ISO date in the future.

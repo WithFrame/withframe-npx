@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
-import { InitService } from '@/api/initService';
+import { InitService } from '@/api/init-service';
 
 describe('InitService', () => {
   it('creates withframe.config.json from explicit options', async () => {

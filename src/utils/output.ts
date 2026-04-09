@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { SEPARATOR } from '@/constants/cli';
+import { SEPARATOR } from '@/constants';
 import type { AddResult } from '@/types';
 
 const printList = ({

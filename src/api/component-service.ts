@@ -1,34 +1,84 @@
-import { access } from 'node:fs/promises';
-import path from 'node:path';
-import { loadWithFrameConfig } from '@/lib/config';
-import { confirm } from '@/lib/prompt';
+import { TokenStore } from '@/lib/tokenStore';
+import { RegistryClient } from '@/api/registry-client';
+import type {
+  AddExecutionHooks,
+  AddOptions,
+  AddResult,
+  ProjectComponentContext,
+  RegistryManifest,
+} from '@/types';
+import { normalizeOptions, normalizeText } from '@/lib/normalize';
 import {
   detectProjectTarget,
+  hasFile,
   installDependencies,
   mergeManifestDependencies,
   resolveOutputDirectory,
   resolveProjectRoot,
   writeManifestFiles,
 } from '@/lib/project';
-import type { AddExecutionHooks, AddOptions, ProjectTarget, RegistryManifest } from '@/types';
+import path from 'node:path';
+import { loadWithFrameConfig } from '@/lib/config';
+import { confirm } from '@/lib/prompt';
 
-export interface ProjectComponentContext {
-  projectRoot: string;
-  target: ProjectTarget;
-  outputDir: string;
-}
+export class ComponentService {
+  constructor(
+    private readonly tokenStore: TokenStore,
+    private readonly registryClient: RegistryClient,
+  ) {}
 
-const hasFile = async (filePath: string): Promise<boolean> => {
-  try {
-    await access(filePath);
-    return true;
-  } catch {
-    return false;
+  public async addComponent(
+    componentSlug: string,
+    opts: AddOptions,
+    hooks: AddExecutionHooks = {},
+  ): Promise<AddResult> {
+    const slug = normalizeText(componentSlug);
+    if (!slug) {
+      throw new Error('Component slug is required.');
+    }
+
+    const options = normalizeOptions(opts);
+    const context = await this.resolveContext(options);
+
+    const tokenResult = await this.tokenStore.resolveAccessToken();
+    if (!tokenResult) {
+      throw new Error('No auth token found. Run `withframe login` first.');
+    }
+
+    const response = await this.registryClient.fetchComponent({
+      slug,
+      target: context.target,
+      variant: options.variant || 'default',
+      token: tokenResult.token,
+    });
+
+    const overwriteDecisions = await this.collectOverwriteDecisions({
+      projectRoot: context.projectRoot,
+      outputDir: context.outputDir,
+      files: response.manifest.files,
+      yes: Boolean(options.yes),
+      hooks,
+    });
+
+    hooks.onApplyStart?.();
+
+    const installation = await this.applyManifest({
+      context,
+      manifest: response.manifest,
+      yes: Boolean(options.yes),
+      hooks,
+      overwriteDecisions,
+    });
+
+    return {
+      component: response.component,
+      target: context.target,
+      outputDir: context.outputDir,
+      ...installation,
+    };
   }
-};
 
-export class ProjectComponentService {
-  async resolveContext(options: AddOptions): Promise<ProjectComponentContext> {
+  private async resolveContext(options: AddOptions): Promise<ProjectComponentContext> {
     const projectRoot = resolveProjectRoot(options.cwd);
     const config = await loadWithFrameConfig(projectRoot);
     const target = await detectProjectTarget({
@@ -45,7 +95,7 @@ export class ProjectComponentService {
     };
   }
 
-  async collectOverwriteDecisions({
+  private async collectOverwriteDecisions({
     projectRoot,
     outputDir,
     files,
@@ -59,17 +109,13 @@ export class ProjectComponentService {
     hooks: AddExecutionHooks;
   }): Promise<Map<string, boolean>> {
     const overwriteDecisions = new Map<string, boolean>();
-    if (yes) {
-      return overwriteDecisions;
-    }
+    if (yes) return overwriteDecisions;
 
     for (const file of files) {
       const relativeFilePath = file.path.replace(/^\/+/, '');
       const destination = path.resolve(projectRoot, outputDir, relativeFilePath);
       const exists = await hasFile(destination);
-      if (!exists) {
-        continue;
-      }
+      if (!exists) continue;
 
       overwriteDecisions.set(
         destination,
@@ -84,7 +130,7 @@ export class ProjectComponentService {
     return overwriteDecisions;
   }
 
-  async applyManifest({
+  private async applyManifest({
     context,
     manifest,
     yes,

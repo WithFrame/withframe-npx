@@ -7,15 +7,16 @@ import {
   InjectionMode,
   type AwilixContainer,
 } from 'awilix';
-import { AuthService } from '@/api/authService';
-import { ComponentService } from '@/api/componentService';
-import { InitService } from '@/api/initService';
+import { AuthService } from '@/api/auth-service';
+import { ComponentService } from '@/api/component-service';
+import { InitService } from '@/api/init-service';
 import { AddCommand, InitCommand, LoginCommand, LogoutCommand } from '@/commands';
-import { CliApp } from '@/core/CliApp';
-import { CommandRegistry } from '@/core/CommandRegistry';
+import { CliApp } from '@/core/cli-app';
+import { CommandRegistry } from '@/core/command-registry';
 import { TokenStore } from '@/lib/tokenStore';
-import { RegistryClient } from '@/api/RegistryClient';
-import { ProjectComponentService } from '@/services/projectComponentService';
+import { RegistryClient } from '@/api/registry-client';
+import { UploadService } from './api/upload-service';
+import { UploadCommand } from './commands/upload';
 
 export interface AppCradle {
   program: Command;
@@ -23,11 +24,12 @@ export interface AppCradle {
   registryClient: RegistryClient;
   authService: AuthService;
   initService: InitService;
-  projectComponentService: ProjectComponentService;
   componentService: ComponentService;
+  uploadService: UploadService;
   initCommand: InitCommand;
   loginCommand: LoginCommand;
   logoutCommand: LogoutCommand;
+  uploadCommand: UploadCommand;
   addCommand: AddCommand;
   commandRegistry: CommandRegistry;
   cliApp: CliApp;
@@ -44,11 +46,12 @@ export const createAppContainer = (program: Command): AwilixContainer<AppCradle>
     registryClient: asClass(RegistryClient).singleton(),
     authService: asClass(AuthService).singleton(),
     initService: asClass(InitService).singleton(),
-    projectComponentService: asClass(ProjectComponentService).singleton(),
     componentService: asClass(ComponentService).singleton(),
+    uploadService: asClass(UploadService).singleton(),
     initCommand: asClass(InitCommand).singleton(),
     loginCommand: asClass(LoginCommand).singleton(),
     logoutCommand: asClass(LogoutCommand).singleton(),
+    uploadCommand: asClass(UploadCommand).singleton(),
     addCommand: asClass(AddCommand).singleton(),
     commandRegistry: asFunction(
       (
@@ -56,7 +59,9 @@ export const createAppContainer = (program: Command): AwilixContainer<AppCradle>
         loginCommand: LoginCommand,
         logoutCommand: LogoutCommand,
         addCommand: AddCommand,
-      ) => new CommandRegistry([initCommand, loginCommand, logoutCommand, addCommand]),
+        uploadCommand: UploadCommand,
+      ) =>
+        new CommandRegistry([initCommand, loginCommand, logoutCommand, addCommand, uploadCommand]),
     ).singleton(),
     cliApp: asClass(CliApp).singleton(),
   });

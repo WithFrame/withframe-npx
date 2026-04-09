@@ -1,10 +1,10 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { CLI_NAME, CLI_VERSION, COLORS } from '@/constants/cli';
-import type { CliApp } from '@/core/CliApp';
-import { createAppContainer } from '@/di/container';
+import { CLI_NAME, CLI_VERSION, COLORS } from '@/constants';
+import type { CliApp } from '@/core/cli-app';
+import { createAppContainer } from '@/container';
 
-export const createCliApp = (): CliApp => {
+export const createApp = (): CliApp => {
   const program = new Command();
 
   program

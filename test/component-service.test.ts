@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { ComponentService } from '@/api/componentService';
-import { RegistryClient } from '@/api/RegistryClient';
+import { ComponentService } from '@/api/component-service';
+import { RegistryClient } from '@/api/registry-client';
 import { TokenStore } from '@/lib/tokenStore';
 import { ProjectComponentService } from '@/services/projectComponentService';
 

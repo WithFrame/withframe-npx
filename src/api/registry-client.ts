@@ -1,4 +1,4 @@
-import { DEFAULT_REGISTRY_URL } from '@/constants/cli';
+import { DEFAULT_REGISTRY_URL } from '@/constants';
 import { getEnvValue } from '@/lib/env';
 import { requestJson } from '@/lib/http';
 import type {
@@ -6,6 +6,7 @@ import type {
   DeviceStartResponse,
   ProjectTarget,
   RegistryComponentResponse,
+  UploadResult,
 } from '@/types';
 
 const normalizeBaseUrl = (baseUrl: string): string => baseUrl.replace(/\/+$/, '');
@@ -64,5 +65,24 @@ export class RegistryClient {
         },
       },
     );
+  }
+
+  uploadComponent({
+    content,
+    fileName,
+    token,
+  }: {
+    content: string;
+    fileName: string;
+    token: string;
+  }): Promise<UploadResult> {
+    return requestJson<UploadResult>(this.toUrl('/api/cli/registry/components/upload'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ content, fileName }),
+    });
   }
 }

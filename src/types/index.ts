@@ -87,6 +87,20 @@ export interface AddOptions {
   yes?: boolean;
 }
 
+export interface UploadOptions {
+  path: string;
+  open?: boolean;
+}
+
+export interface UploadResult {
+  componentId: string;
+  slug: string;
+  status: 'draft';
+  target: ProjectTarget;
+  editUrl: string;
+  createdDraft: boolean;
+}
+
 export interface AddExecutionHooks {
   confirmOverwrite?: (relativePath: string) => Promise<boolean>;
   onApplyStart?: () => void;
@@ -104,4 +118,10 @@ export interface AddResult {
 
 export interface LoginOptions {
   openBrowser?: boolean;
+}
+
+export interface ProjectComponentContext {
+  projectRoot: string;
+  target: ProjectTarget;
+  outputDir: string;
 }
