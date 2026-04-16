@@ -7,7 +7,7 @@ import {
   resolveOutputDirectory,
   resolveProjectRoot,
 } from '@/lib/project';
-import type { ProjectTarget, WithFrameConfig } from '@/types';
+import type { InitExecutionHooks, ProjectTarget, WithFrameConfig } from '@/types';
 import { select } from '@inquirer/prompts';
 import { normalizeProjectTarget } from '@/lib/normalize';
 
@@ -44,7 +44,10 @@ const detectTargetIfPossible = async (
 };
 
 export class InitService {
-  async createConfig(options: InitConfigOptions): Promise<InitConfigResult> {
+  async createConfig(
+    options: InitConfigOptions,
+    hooks: InitExecutionHooks = {},
+  ): Promise<InitConfigResult> {
     const projectRoot = resolveProjectRoot(options.cwd);
     const configPath = getConfigFilePath(projectRoot);
     const alreadyExists = await hasFile(configPath);
@@ -70,6 +73,7 @@ export class InitService {
       ...(target ? { target } : {}),
     };
 
+    hooks.onInitializeStart?.();
     await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`, 'utf8');
 
     return {

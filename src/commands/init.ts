@@ -32,13 +32,20 @@ export class InitCommand extends BaseCommand {
     const outputDir = normalizeText(options.outputDir);
 
     const result = await this.runTask(
-      async () => {
-        return this.initService.createConfig({
-          cwd,
-          outputDir,
-          target: options.target,
-          force: Boolean(options.force),
-        });
+      async ({ start }) => {
+        return this.initService.createConfig(
+          {
+            cwd,
+            outputDir,
+            target: options.target,
+            force: Boolean(options.force),
+          },
+          {
+            onInitializeStart: () => {
+              start();
+            },
+          },
+        );
       },
       {
         spinner: {
@@ -51,6 +58,7 @@ export class InitCommand extends BaseCommand {
             ? chalk.green.bold('withframe.config.json updated')
             : chalk.green.bold('withframe.config.json created'),
         failureText: chalk.red.bold('Failed to initialize config'),
+        startMode: 'manual',
       },
     );
 

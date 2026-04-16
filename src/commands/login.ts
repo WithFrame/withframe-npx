@@ -31,7 +31,7 @@ export class LoginCommand extends BaseCommand {
     const cwd = options.cwd?.trim() || process.cwd();
     await loadWithFrameConfig(cwd);
 
-    const session = await this.runTask(
+    await this.runTask(
       async ({ spinner }) => {
         spinner.text = chalk.cyan('Waiting for browser approval...');
         return this.authService.login({ openBrowser: options.open });
@@ -48,8 +48,6 @@ export class LoginCommand extends BaseCommand {
     );
 
     console.log('');
-    console.log(chalk.gray(`  Verification URL: ${session.verificationUri}`));
-    console.log(chalk.gray(`  Code: ${session.userCode}`));
     console.log(chalk.gray(`  Token cache: ${this.tokenStore.getAuthFilePath()}`));
     console.log('');
   }

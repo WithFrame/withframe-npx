@@ -106,6 +106,10 @@ export interface AddExecutionHooks {
   onApplyStart?: () => void;
 }
 
+export interface InitExecutionHooks {
+  onInitializeStart?: () => void;
+}
+
 export interface AddResult {
   component: RegistryComponentPayload;
   target: ProjectTarget;

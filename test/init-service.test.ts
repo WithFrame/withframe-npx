@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { InitService } from '@/api/init-service';
@@ -81,5 +82,34 @@ describe('InitService', () => {
       outputDir: 'ui/withframe',
       target: 'react_native',
     });
+  });
+
+  it('calls onInitializeStart before writing config file', async () => {
+    const tempRoot = await mkdtemp(path.join(os.tmpdir(), 'withframe-init-'));
+    const projectDir = path.join(tempRoot, 'project');
+    const configPath = path.join(projectDir, 'withframe.config.json');
+
+    await mkdir(projectDir, { recursive: true });
+
+    const service = new InitService();
+    let hookCalled = false;
+    let fileExistsWhenHookCalled = true;
+
+    await service.createConfig(
+      {
+        cwd: projectDir,
+        outputDir: 'src/components/withframe',
+        target: 'expo',
+      },
+      {
+        onInitializeStart: () => {
+          hookCalled = true;
+          fileExistsWhenHookCalled = existsSync(configPath);
+        },
+      },
+    );
+
+    expect(hookCalled).toBe(true);
+    expect(fileExistsWhenHookCalled).toBe(false);
   });
 });

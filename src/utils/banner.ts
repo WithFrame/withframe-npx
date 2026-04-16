@@ -1,15 +1,15 @@
 import { COLORS } from '@/constants';
 import chalk from 'chalk';
-
-const BANNER = `
- __        ___ _   _     _____                         
- \ \      / (_) |_| |__ |  ___| __ __ _ _ __ ___   ___ 
-  \ \ /\ / /| | __| '_ \| |_ | '__/ _\` | '_ \ _ \ / _ \
-   \ V  V / | | |_| | | |  _|| | | (_| | | | | | |  __/
-    \_/\_/  |_|\__|_| |_|_|  |_|  \__,_|_| |_| |_|\___|
-`;
+import figlet from 'figlet';
 
 export const showBanner = (): void => {
-  const coloredBanner = chalk.hex(COLORS.PRIMARY_600)(BANNER);
+  const banner = figlet.textSync('Withframe', {
+    font: 'Standard',
+    horizontalLayout: 'default',
+    verticalLayout: 'default',
+    width: 80,
+    whitespaceBreak: true,
+  });
+  const coloredBanner = chalk.hex(COLORS.PRIMARY_600)(banner);
   console.log(coloredBanner);
 };
