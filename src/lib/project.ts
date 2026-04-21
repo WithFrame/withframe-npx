@@ -90,6 +90,28 @@ const toDependencySpecifier = (name: string, version: string): string => {
   return normalizedVersion ? `${name}@${normalizedVersion}` : name;
 };
 
+// Merges all dependency fields into a single lookup object.
+const collectProjectDependencies = (data: PackageJson): Record<string, string> => ({
+  ...(data.dependencies ?? {}),
+  ...(data.devDependencies ?? {}),
+  ...(data.peerDependencies ?? {}),
+});
+
+// Attempts to detect project target from package dependencies.
+const detectTargetFromDependencies = (data: PackageJson): ProjectTarget | null => {
+  const dependencies = collectProjectDependencies(data);
+
+  if (isString(dependencies.expo)) {
+    return 'expo';
+  }
+
+  if (isString(dependencies['react-native'])) {
+    return 'react_native';
+  }
+
+  return null;
+};
+
 // Resolves the project root from CLI input or the current working directory.
 export const resolveProjectRoot = (cwdOption?: string): string => {
   return !cwdOption ? process.cwd() : path.resolve(cwdOption);
@@ -114,23 +136,25 @@ export const detectProjectTarget = async ({
   }
 
   const { data } = await readPackageJson(projectRoot);
-  const dependencies = {
-    ...(data.dependencies ?? {}),
-    ...(data.devDependencies ?? {}),
-    ...(data.peerDependencies ?? {}),
-  };
-
-  if (isString(dependencies.expo)) {
-    return 'expo';
+  const detectedTarget = detectTargetFromDependencies(data);
+  if (!detectedTarget) {
+    throw new Error(
+      "Could not detect project target. Install 'expo' or 'react-native', or set target in withframe.config.json.",
+    );
   }
 
-  if (isString(dependencies['react-native'])) {
-    return 'react_native';
+  return detectedTarget;
+};
+
+// Determines whether dependency installation should run for this project.
+export const shouldInstallManifestDependencies = async (projectRoot: string): Promise<boolean> => {
+  const packageJsonPath = path.join(projectRoot, 'package.json');
+  if (!(await hasFile(packageJsonPath))) {
+    return false;
   }
 
-  throw new Error(
-    "Could not detect project target. Install 'expo' or 'react-native', or set target in withframe.config.json.",
-  );
+  const { data } = await readPackageJson(projectRoot);
+  return Boolean(detectTargetFromDependencies(data));
 };
 
 // Chooses where generated components should be written.

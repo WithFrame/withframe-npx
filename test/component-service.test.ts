@@ -104,6 +104,71 @@ describe('ComponentService', () => {
     }
   });
 
+  it('adds component without installing dependencies when package.json is missing', async () => {
+    const projectDir = await mkdtemp(path.join(os.tmpdir(), 'withframe-component-service-'));
+
+    try {
+      const tokenStore = {
+        resolveAccessToken: vi.fn(async () => ({ token: 'token-123', source: 'env' as const })),
+      } as unknown as TokenStore;
+
+      const registryClient = {
+        fetchComponent: vi.fn(async () => ({
+          component: {
+            id: 'card-1',
+            slug: 'simple-card',
+            title: 'Simple Card',
+            section: 'cards',
+            version: 1,
+          },
+          manifest: {
+            files: [
+              {
+                path: 'cards/simple-card.tsx',
+                content: 'export const SimpleCard = () => null;\n',
+                overwrite: false,
+              },
+            ],
+            dependencies: {
+              'left-pad': '^1.3.0',
+            },
+            peerDependencies: {},
+            devDependencies: {},
+            meta: {
+              target: 'expo' as const,
+              variant: 'default',
+              isDefaultVariant: true,
+              generatedAt: '2026-04-22T09:00:00.000Z',
+              source: 'withframe-registry-v1' as const,
+            },
+          },
+        })),
+      } as unknown as RegistryClient;
+
+      const service = new ComponentService(tokenStore, registryClient);
+      const result = await service.addComponent(
+        'simple-card',
+        {
+          variant: 'default',
+          yes: true,
+          cwd: projectDir,
+          target: 'expo',
+        },
+        {},
+      );
+
+      expect(result.installedDependencies).toEqual([]);
+      await expect(
+        readFile(
+          path.join(projectDir, 'src', 'components', 'withframe', 'cards', 'simple-card.tsx'),
+          'utf8',
+        ),
+      ).resolves.toBe('export const SimpleCard = () => null;\n');
+    } finally {
+      await rm(projectDir, { recursive: true, force: true });
+    }
+  });
+
   it('throws when no auth token is available', async () => {
     const projectDir = await mkdtemp(path.join(os.tmpdir(), 'withframe-component-service-'));
     await writeFile(

@@ -15,6 +15,7 @@ import {
   mergeManifestDependencies,
   resolveOutputDirectory,
   resolveProjectRoot,
+  shouldInstallManifestDependencies,
   writeManifestFiles,
 } from '@/lib/project';
 import path from 'node:path';
@@ -167,16 +168,19 @@ export class ComponentService {
       },
     });
 
-    const dependencies = await mergeManifestDependencies({
-      projectRoot: context.projectRoot,
-      manifest,
-    });
+    let installedDependencies: string[] = [];
+    if (await shouldInstallManifestDependencies(context.projectRoot)) {
+      const dependencies = await mergeManifestDependencies({
+        projectRoot: context.projectRoot,
+        manifest,
+      });
 
-    const installedDependencies = await installDependencies({
-      projectRoot: context.projectRoot,
-      runtimeDependencies: dependencies.runtimeToInstall,
-      devDependencies: dependencies.devToInstall,
-    });
+      installedDependencies = await installDependencies({
+        projectRoot: context.projectRoot,
+        runtimeDependencies: dependencies.runtimeToInstall,
+        devDependencies: dependencies.devToInstall,
+      });
+    }
 
     return {
       createdFiles: fileResult.created,
