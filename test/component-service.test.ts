@@ -4,7 +4,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { describe, expect, it, vi } from 'vitest';
 import { ComponentService } from '@/api/component-service';
 import { RegistryClient } from '@/api/registry-client';
-import { TokenStore } from '@/lib/tokenStore';
+import { TokenStore } from '@/lib/token-store';
 
 describe('ComponentService', () => {
   it('fetches, parses and applies component manifest', async () => {
@@ -98,7 +98,9 @@ describe('ComponentService', () => {
         'auth',
         'simple-inline-sign-in-form.tsx',
       );
-      await expect(readFile(writtenFile, 'utf8')).resolves.toBe('export const SignIn = () => null;\n');
+      await expect(readFile(writtenFile, 'utf8')).resolves.toBe(
+        'export const SignIn = () => null;\n',
+      );
     } finally {
       await rm(projectDir, { recursive: true, force: true });
     }

@@ -1,4 +1,4 @@
-import { TokenStore } from '@/lib/tokenStore';
+import { TokenStore } from '@/lib/token-store';
 import { RegistryClient } from './registry-client';
 import { normalizeText } from '@/lib/normalize';
 import { hasFile } from '@/lib/project';

@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { BaseCommand } from '@/core/base-command';
-import { TokenStore } from '@/lib/tokenStore';
+import { TokenStore } from '@/lib/token-store';
 
 export class LogoutCommand extends BaseCommand {
   readonly name = 'logout';

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
-import { TokenStore } from '@/lib/tokenStore';
+import { TokenStore } from '@/lib/token-store';
 
 const withEnv = async (key: string, value: string | undefined, fn: () => Promise<void>) => {
   const original = process.env[key];

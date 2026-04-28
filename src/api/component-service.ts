@@ -1,4 +1,4 @@
-import { TokenStore } from '@/lib/tokenStore';
+import { TokenStore } from '@/lib/token-store';
 import { RegistryClient } from '@/api/registry-client';
 import type {
   AddExecutionHooks,

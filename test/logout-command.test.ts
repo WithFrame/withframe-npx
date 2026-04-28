@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { LogoutCommand } from '@/commands/logout';
-import { TokenStore } from '@/lib/tokenStore';
+import { TokenStore } from '@/lib/token-store';
 
 type LogoutCommandTestAccess = LogoutCommand & {
   runTask: <T>(

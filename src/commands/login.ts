@@ -3,7 +3,7 @@ import type { Command } from 'commander';
 import { AuthService } from '@/api/auth-service';
 import { loadWithFrameConfig } from '@/lib/config';
 import { BaseCommand } from '@/core/base-command';
-import { TokenStore } from '@/lib/tokenStore';
+import { TokenStore } from '@/lib/token-store';
 
 export class LoginCommand extends BaseCommand {
   readonly name = 'login';

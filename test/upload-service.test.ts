@@ -4,7 +4,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { describe, expect, it, vi } from 'vitest';
 import { UploadService } from '@/api/upload-service';
 import { RegistryClient } from '@/api/registry-client';
-import { TokenStore } from '@/lib/tokenStore';
+import { TokenStore } from '@/lib/token-store';
 
 describe('UploadService', () => {
   it('reads component source and uploads it to registry', async () => {

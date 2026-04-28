@@ -6,6 +6,8 @@ import type {
   DeviceStartResponse,
   ProjectTarget,
   RegistryComponentResponse,
+  ShotCollectionsResponse,
+  ShotUploadResult,
   UploadResult,
 } from '@/types';
 
@@ -83,6 +85,79 @@ export class RegistryClient {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ content, fileName }),
+    });
+  }
+
+  fetchShotCollections({
+    token,
+    offset = 0,
+    limit = 40,
+  }: {
+    token: string;
+    offset?: number;
+    limit?: number;
+  }): Promise<ShotCollectionsResponse> {
+    const params = new URLSearchParams({
+      offset: String(offset),
+      limit: String(limit),
+    });
+
+    return requestJson<ShotCollectionsResponse>(
+      this.toUrl(`/api/cli/shots/collections?${params.toString()}`),
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+  }
+
+  uploadShot({
+    token,
+    fileName,
+    mimeType,
+    content,
+    collectionId,
+    collectionTitle,
+    createNewCollection,
+    color,
+  }: {
+    token: string;
+    fileName: string;
+    mimeType: 'image/png' | 'image/jpeg' | 'image/jpg';
+    content: Buffer;
+    collectionId?: string;
+    collectionTitle?: string;
+    createNewCollection?: boolean;
+    color?: string;
+  }): Promise<ShotUploadResult> {
+    const formData = new FormData();
+    const fileContent = Uint8Array.from(content);
+    formData.append('file', new Blob([fileContent], { type: mimeType }), fileName);
+
+    if (collectionId) {
+      formData.append('collectionId', collectionId);
+    }
+
+    if (collectionTitle) {
+      formData.append('collectionTitle', collectionTitle);
+    }
+
+    if (createNewCollection) {
+      formData.append('createNewCollection', 'true');
+    }
+
+    if (color) {
+      formData.append('color', color);
+    }
+
+    return requestJson<ShotUploadResult>(this.toUrl('/api/cli/shots/upload'), {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData as unknown as RequestInit['body'],
     });
   }
 }

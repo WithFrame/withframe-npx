@@ -101,6 +101,28 @@ export interface UploadResult {
   createdDraft: boolean;
 }
 
+export interface ShotOptions {
+  file: string;
+  device?: string;
+}
+
+export interface ShotUploadResult {
+  url: string;
+}
+
+export interface ShotCollectionListItem {
+  collectionId: string;
+  title: string;
+  updatedAt: string;
+  screenshotsCount: number;
+}
+
+export interface ShotCollectionsResponse {
+  items: ShotCollectionListItem[];
+  hasMore: boolean;
+  nextOffset: number;
+}
+
 export interface AddExecutionHooks {
   confirmOverwrite?: (relativePath: string) => Promise<boolean>;
   onApplyStart?: () => void;

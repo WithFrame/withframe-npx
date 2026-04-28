@@ -3,7 +3,7 @@ import open from 'open';
 import { AuthService } from '@/api/auth-service';
 import { RegistryClient } from '@/api/registry-client';
 import { DEFAULT_REGISTRY_URL } from '@/constants';
-import { TokenStore } from '@/lib/tokenStore';
+import { TokenStore } from '@/lib/token-store';
 import { delay } from '@/utils/delay';
 
 vi.mock('open', () => ({
