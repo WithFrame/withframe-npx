@@ -136,7 +136,9 @@ export class ShotService {
     return mimeType;
   }
 
-  private async selectCollection(items: ShotCollectionListItem[]): Promise<CollectionSelectionResult> {
+  private async selectCollection(
+    items: ShotCollectionListItem[],
+  ): Promise<CollectionSelectionResult> {
     if (!process.stdin.isTTY || !process.stdout.isTTY) {
       throw new Error('Interactive collection selection requires a TTY.');
     }
@@ -151,7 +153,7 @@ export class ShotService {
           description: 'Upload into a new screenshot collection',
         },
         ...items.map((item) => ({
-          name: `${item.title} (${item.collectionId})`,
+          name: `${item.title} (${item.collectionId.slice(0, 8)}...)`,
           value: item.collectionId,
           description: `${item.screenshotsCount} screenshot(s)`,
         })),
