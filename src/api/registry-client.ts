@@ -11,13 +11,65 @@ import type {
   UploadResult,
 } from '@/types';
 
-const normalizeBaseUrl = (baseUrl: string): string => baseUrl.replace(/\/+$/, '');
+const sanitizeBaseUrl = (baseUrl: string): string => baseUrl.replace(/\/+$/, '');
+const CALLBACK_URL_TYPE = {
+  DEV: 'DEV',
+  STAGE: 'STAGE',
+  PROD: 'PROD',
+} as const;
+type CallbackUrlType = (typeof CALLBACK_URL_TYPE)[keyof typeof CALLBACK_URL_TYPE];
+
+const isLocalHost = (hostname: string): boolean => {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0';
+};
+
+const parseUrl = (value: string): URL | null => {
+  try {
+    return new URL(value);
+  } catch {
+    try {
+      return new URL(`http://${value}`);
+    } catch {
+      return null;
+    }
+  }
+};
+
+const formatCallback = (url: string): CallbackUrlType => {
+  const parsed = parseUrl(url.trim());
+  if (!parsed) {
+    return CALLBACK_URL_TYPE.PROD;
+  }
+
+  const hostname = parsed.hostname.toLowerCase();
+  if (hostname === 'stage.withfra.me') {
+    return CALLBACK_URL_TYPE.STAGE;
+  }
+
+  if (hostname === 'withfra.me') {
+    return CALLBACK_URL_TYPE.PROD;
+  }
+
+  if (isLocalHost(hostname)) {
+    return CALLBACK_URL_TYPE.DEV;
+  }
+
+  return CALLBACK_URL_TYPE.PROD;
+};
 
 export class RegistryClient {
-  private toUrl(endpoint: string): string {
-    const baseUrl = getEnvValue('WITHFRAME_REGISTRY_URL') || DEFAULT_REGISTRY_URL;
+  private getRegistryBaseUrl(): string {
+    return getEnvValue('WITHFRAME_REGISTRY_URL') || DEFAULT_REGISTRY_URL;
+  }
 
-    return `${normalizeBaseUrl(baseUrl)}${endpoint}`;
+  private getCallbackUrlType(): CallbackUrlType {
+    return formatCallback(this.getRegistryBaseUrl());
+  }
+
+  private toUrl(endpoint: string): string {
+    const baseUrl = this.getRegistryBaseUrl();
+
+    return `${sanitizeBaseUrl(baseUrl)}${endpoint}`;
   }
 
   startDeviceFlow({
@@ -78,13 +130,15 @@ export class RegistryClient {
     fileName: string;
     token: string;
   }): Promise<UploadResult> {
+    const callback = this.getCallbackUrlType();
+
     return requestJson<UploadResult>(this.toUrl('/api/cli/registry/components/upload'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ content, fileName }),
+      body: JSON.stringify({ content, fileName, callback }),
     });
   }
 
@@ -132,9 +186,11 @@ export class RegistryClient {
     createNewCollection?: boolean;
     color?: string;
   }): Promise<ShotUploadResult> {
+    const callback = this.getCallbackUrlType();
     const formData = new FormData();
     const fileContent = Uint8Array.from(content);
     formData.append('file', new Blob([fileContent], { type: mimeType }), fileName);
+    formData.append('callback', callback);
 
     if (collectionId) {
       formData.append('collectionId', collectionId);
