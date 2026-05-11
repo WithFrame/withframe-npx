@@ -3,7 +3,6 @@ import open from 'open';
 import { AuthService } from '@/api/auth-service';
 import { RegistryClient } from '@/api/registry-client';
 import { DEFAULT_REGISTRY_URL } from '@/constants';
-import { TokenStore } from '@/lib/token-store';
 import { delay } from '@/utils/delay';
 
 vi.mock('open', () => ({
@@ -19,11 +18,7 @@ describe('AuthService', () => {
     vi.clearAllMocks();
   });
 
-  it('polls device flow and stores token after authorization', async () => {
-    const tokenStore = {
-      saveToken: vi.fn(async () => undefined),
-    } as unknown as TokenStore;
-
+  it('polls device flow and returns token after authorization', async () => {
     const registryClient = {
       startDeviceFlow: vi.fn(async () => ({
         deviceCode: 'device-code',
@@ -44,16 +39,16 @@ describe('AuthService', () => {
         }),
     } as unknown as RegistryClient;
 
-    const service = new AuthService(tokenStore, registryClient);
+    const service = new AuthService(registryClient);
     const result = await service.login({ openBrowser: true });
 
     expect(result).toEqual({
       userCode: 'ABCD1234',
       verificationUri: `${DEFAULT_REGISTRY_URL}/device`,
+      accessToken: 'access-token',
     });
     expect(registryClient.startDeviceFlow).toHaveBeenCalledTimes(1);
     expect(registryClient.pollDeviceFlow).toHaveBeenCalledTimes(2);
-    expect(tokenStore.saveToken).toHaveBeenCalledWith('access-token', 3600);
     expect(vi.mocked(delay)).toHaveBeenCalled();
     expect(vi.mocked(open)).toHaveBeenCalledWith(
       `${DEFAULT_REGISTRY_URL}/device?user_code=ABCD1234`,

@@ -1,5 +1,6 @@
 export const ENV = {
   WITHFRAME_REGISTRY_URL: 'WITHFRAME_REGISTRY_URL',
+  WITHFRAME_TOKEN: 'WITHFRAME_TOKEN',
 } as const;
 
 export type EnvVariable = keyof typeof ENV;
@@ -16,4 +17,15 @@ export const getEnvValue = (key: EnvVariable): string | undefined => {
 
   const normalized = value.trim();
   return normalized || undefined;
+};
+
+// Returns a required env var value or throws with an actionable message.
+export const getRequiredEnvValue = (key: EnvVariable): string => {
+  const value = getEnvValue(key);
+  if (value) {
+    return value;
+  }
+
+  const envName = getEnvVariableName(key);
+  throw new Error(`Missing required environment variable: ${envName}.`);
 };

@@ -1,4 +1,3 @@
-import { DEFAULT_REGISTRY_URL } from '@/constants';
 import { getEnvValue } from '@/lib/env';
 import { requestJson } from '@/lib/http';
 import type {
@@ -59,7 +58,7 @@ const formatCallback = (url: string): CallbackUrlType => {
 
 export class RegistryClient {
   private getRegistryBaseUrl(): string {
-    return getEnvValue('WITHFRAME_REGISTRY_URL') || DEFAULT_REGISTRY_URL;
+    return getEnvValue('WITHFRAME_REGISTRY_URL') as string;
   }
 
   private getCallbackUrlType(): CallbackUrlType {

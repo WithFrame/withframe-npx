@@ -41,9 +41,6 @@ export class ShotService {
     const mimeType = this.resolveMimeType(filePath);
 
     const tokenResult = await this.tokenStore.resolveAccessToken();
-    if (!tokenResult) {
-      throw new Error('No auth token found. Run `withframe login` first.');
-    }
 
     const content = await this.readFileContent(filePath);
     const { Jimp } = await import('jimp');

@@ -3,6 +3,7 @@ import type { Command } from 'commander';
 import { ShotService } from '@/api/shot-service';
 import { BaseCommand } from '@/core/base-command';
 import type { ShotOptions } from '@/types';
+import type { EnvVariable } from '@/lib/env';
 
 export class ShotCommand extends BaseCommand {
   readonly name = 'shot';
@@ -10,6 +11,10 @@ export class ShotCommand extends BaseCommand {
 
   constructor(private readonly shotService: ShotService) {
     super();
+  }
+
+  protected requiredEnvVariables(): EnvVariable[] {
+    return ['WITHFRAME_REGISTRY_URL', 'WITHFRAME_TOKEN'];
   }
 
   protected configure(command: Command): Command {

@@ -4,6 +4,7 @@ import open from 'open';
 import { BaseCommand } from '@/core/base-command';
 import { UploadService } from '@/api/upload-service';
 import { UploadOptions } from '@/types';
+import type { EnvVariable } from '@/lib/env';
 
 export class UploadCommand extends BaseCommand {
   readonly name = 'upload';
@@ -11,6 +12,10 @@ export class UploadCommand extends BaseCommand {
 
   constructor(private readonly uploadService: UploadService) {
     super();
+  }
+
+  protected requiredEnvVariables(): EnvVariable[] {
+    return ['WITHFRAME_REGISTRY_URL', 'WITHFRAME_TOKEN'];
   }
 
   protected configure(command: Command): Command {

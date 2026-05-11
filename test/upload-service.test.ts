@@ -43,22 +43,4 @@ describe('UploadService', () => {
     }
   });
 
-  it('throws when no auth token is available', async () => {
-    const tmpDir = await mkdtemp(path.join(os.tmpdir(), 'withframe-upload-test-'));
-    const filePath = path.join(tmpDir, 'Button.tsx');
-    await writeFile(filePath, 'export const Button = () => null;\n', 'utf8');
-
-    try {
-      const service = new UploadService(
-        {
-          resolveAccessToken: vi.fn(async () => null),
-        } as unknown as TokenStore,
-        {} as RegistryClient,
-      );
-
-      await expect(service.upload({ path: filePath })).rejects.toThrow(/No auth token found/);
-    } finally {
-      await rm(tmpDir, { recursive: true, force: true });
-    }
-  });
 });

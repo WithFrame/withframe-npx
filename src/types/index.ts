@@ -77,7 +77,7 @@ export interface RegistryComponentResponse {
 
 export interface AuthTokenResult {
   token: string;
-  source: 'env' | 'file';
+  source: 'env';
 }
 
 export interface AddOptions {

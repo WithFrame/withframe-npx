@@ -42,9 +42,6 @@ export class ComponentService {
     const context = await this.resolveContext(options);
 
     const tokenResult = await this.tokenStore.resolveAccessToken();
-    if (!tokenResult) {
-      throw new Error('No auth token found. Run `withframe login` first.');
-    }
 
     const response = await this.registryClient.fetchComponent({
       slug,

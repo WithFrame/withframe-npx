@@ -5,6 +5,7 @@ import { BaseCommand } from '@/core/base-command';
 import { confirm } from '@/lib/prompt';
 import type { AddOptions, AddResult } from '@/types';
 import { printAddResult } from '@/utils/output';
+import type { EnvVariable } from '@/lib/env';
 
 export class AddCommand extends BaseCommand {
   readonly name = 'add <component>';
@@ -12,6 +13,10 @@ export class AddCommand extends BaseCommand {
 
   constructor(private readonly componentService: ComponentService) {
     super();
+  }
+
+  protected requiredEnvVariables(): EnvVariable[] {
+    return ['WITHFRAME_REGISTRY_URL', 'WITHFRAME_TOKEN'];
   }
 
   protected configure(command: Command): Command {

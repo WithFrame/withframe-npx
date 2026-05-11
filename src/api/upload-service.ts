@@ -16,9 +16,6 @@ export class UploadService {
     const compPath = await this.resolveComponentPath(opts.path);
 
     const tokenResult = await this.tokenStore.resolveAccessToken();
-    if (!tokenResult) {
-      throw new Error('No auth token found. Run `withframe login` first.');
-    }
 
     try {
       await access(compPath);

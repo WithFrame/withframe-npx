@@ -3,35 +3,34 @@ import type { Command } from 'commander';
 import { AuthService } from '@/api/auth-service';
 import { loadWithFrameConfig } from '@/lib/config';
 import { BaseCommand } from '@/core/base-command';
-import { TokenStore } from '@/lib/token-store';
+import type { EnvVariable } from '@/lib/env';
 
 export class LoginCommand extends BaseCommand {
   readonly name = 'login';
-  readonly description = chalk.green('Authenticate WithFrame CLI via Device Flow');
+  readonly description = chalk.green('Authenticate and output WITHFRAME_TOKEN export command');
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly tokenStore: TokenStore,
-  ) {
+  constructor(private readonly authService: AuthService) {
     super();
+  }
+
+  protected requiredEnvVariables(): EnvVariable[] {
+    return ['WITHFRAME_REGISTRY_URL'];
   }
 
   protected configure(command: Command): Command {
     return command
-      .option('-r, --registry <url>', 'Override registry base URL')
       .option('--no-open', 'Do not open browser automatically')
       .option('--cwd <path>', 'Resolve config from directory');
   }
 
   protected async execute(options: {
-    registry?: string;
     open?: boolean;
     cwd?: string;
   }): Promise<void> {
     const cwd = options.cwd?.trim() || process.cwd();
     await loadWithFrameConfig(cwd);
 
-    await this.runTask(
+    const authResult = await this.runTask(
       async ({ spinner }) => {
         spinner.text = chalk.cyan('Waiting for browser approval...');
         return this.authService.login({ openBrowser: options.open });
@@ -48,7 +47,8 @@ export class LoginCommand extends BaseCommand {
     );
 
     console.log('');
-    console.log(chalk.gray(`  Token cache: ${this.tokenStore.getAuthFilePath()}`));
+    console.log(chalk.cyan('  Export this token in your shell:'));
+    console.log(chalk.white(`  export WITHFRAME_TOKEN="${authResult.accessToken}"`));
     console.log('');
   }
 }

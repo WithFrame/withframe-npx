@@ -171,40 +171,4 @@ describe('ComponentService', () => {
     }
   });
 
-  it('throws when no auth token is available', async () => {
-    const projectDir = await mkdtemp(path.join(os.tmpdir(), 'withframe-component-service-'));
-    await writeFile(
-      path.join(projectDir, 'package.json'),
-      JSON.stringify(
-        {
-          name: 'component-test',
-          private: true,
-          dependencies: {
-            expo: '^54.0.0',
-          },
-        },
-        null,
-        2,
-      ),
-      'utf8',
-    );
-
-    try {
-      const tokenStore = {
-        resolveAccessToken: vi.fn(async () => null),
-      } as unknown as TokenStore;
-      const registryClient = {
-        fetchComponent: vi.fn(),
-      } as unknown as RegistryClient;
-      const service = new ComponentService(tokenStore, registryClient);
-
-      await expect(
-        service.addComponent('button', { variant: 'default', cwd: projectDir, target: 'expo' }),
-      ).rejects.toThrow(/No auth token found/);
-
-      expect(registryClient.fetchComponent).not.toHaveBeenCalled();
-    } finally {
-      await rm(projectDir, { recursive: true, force: true });
-    }
-  });
 });

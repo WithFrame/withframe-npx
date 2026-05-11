@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { isFunction } from '@/lib/type-guards';
+import { getRequiredEnvValue, type EnvVariable } from '@/lib/env';
 
 interface SpinnerTaskOptions<T> {
   spinner: Parameters<typeof ora>[0];
@@ -13,6 +14,10 @@ interface SpinnerTaskOptions<T> {
 export abstract class BaseCommand {
   abstract readonly name: string;
   abstract readonly description: string;
+
+  protected requiredEnvVariables(): EnvVariable[] {
+    return [];
+  }
 
   protected configure(command: Command): Command {
     return command;
@@ -55,7 +60,7 @@ export abstract class BaseCommand {
         : options.successText;
 
       if (started) {
-        spinner.succeed(successText);
+        spinner.succeed(successText as string);
       } else {
         console.log(successText);
       }
@@ -74,6 +79,7 @@ export abstract class BaseCommand {
     const command = this.configure(program.command(this.name).description(this.description));
     command.action(async (...args: unknown[]) => {
       try {
+        this.requiredEnvVariables().forEach((key) => getRequiredEnvValue(key));
         await this.execute(...args);
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';

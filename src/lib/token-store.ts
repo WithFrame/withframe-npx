@@ -1,22 +1,9 @@
-import { mkdir, readFile, unlink, writeFile, chmod } from 'node:fs/promises';
+import { mkdir, unlink, writeFile, chmod } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { AUTH_FILE_NAME, TOKEN_ENV_KEY, WITHFRAME_DIR } from '@/constants';
+import { AUTH_FILE_NAME, WITHFRAME_DIR } from '@/constants';
 import type { AuthFilePayload, AuthTokenResult } from '@/types';
-
-// Checks that a value is a valid ISO date in the future.
-const isFutureIsoDate = (value: unknown): boolean => {
-  if (typeof value !== 'string') {
-    return false;
-  }
-
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return false;
-  }
-
-  return parsed.getTime() > Date.now();
-};
+import { getEnvValue } from './env';
 
 export class TokenStore {
   private readonly authDirectoryPath: string = path.join(os.homedir(), WITHFRAME_DIR);
@@ -27,31 +14,8 @@ export class TokenStore {
     return this.authFilePath;
   }
 
-  // Reads a valid token from env or auth file, otherwise returns null.
-  async resolveAccessToken(): Promise<AuthTokenResult | null> {
-    const envToken = process.env[TOKEN_ENV_KEY]?.trim();
-    if (envToken) {
-      return { token: envToken, source: 'env' };
-    }
-
-    let payload: AuthFilePayload;
-    try {
-      const raw = await readFile(this.authFilePath, 'utf8');
-      payload = JSON.parse(raw) as AuthFilePayload;
-    } catch {
-      return null;
-    }
-
-    if (
-      typeof payload?.accessToken !== 'string' ||
-      !payload.accessToken.trim() ||
-      !isFutureIsoDate(payload?.expiresAt)
-    ) {
-      await this.clearToken().catch(() => undefined);
-      return null;
-    }
-
-    return { token: payload.accessToken.trim(), source: 'file' };
+  async resolveAccessToken(): Promise<AuthTokenResult> {
+    return { token: getEnvValue('WITHFRAME_TOKEN') as string, source: 'env' };
   }
 
   // Persists an access token with creation and expiration timestamps.

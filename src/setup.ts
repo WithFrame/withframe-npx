@@ -19,7 +19,7 @@ export const createApp = (): CliApp => {
     .addHelpText(
       'after',
       chalk.dim(
-        '\n📖 Example:\n  $ withframe init\n  $ withframe login\n  $ withframe add button\n',
+        '\n📖 Example:\n  $ export WITHFRAME_REGISTRY_URL="https://withfra.me"\n  $ export WITHFRAME_TOKEN="<token>"\n  $ withframe add button\n',
       ),
     );
 

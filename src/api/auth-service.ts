@@ -1,18 +1,15 @@
 import open from 'open';
 import { RegistryClient } from '@/api/registry-client';
-import { TokenStore } from '@/lib/token-store';
 import type { LoginOptions } from '@/types';
 import { delay } from '@/utils/delay';
 
 export class AuthService {
-  constructor(
-    private readonly tokenStore: TokenStore,
-    private readonly registryClient: RegistryClient,
-  ) {}
+  constructor(private readonly registryClient: RegistryClient) {}
 
   async login({ openBrowser = true }: LoginOptions): Promise<{
     userCode: string;
     verificationUri: string;
+    accessToken: string;
   }> {
     const session = await this.registryClient.startDeviceFlow();
 
@@ -34,10 +31,10 @@ export class AuthService {
       }
 
       if (poll.status === 'authorized') {
-        await this.tokenStore.saveToken(poll.accessToken, poll.expiresIn);
         return {
           userCode: session.userCode,
           verificationUri: session.verificationUri,
+          accessToken: poll.accessToken,
         };
       }
 

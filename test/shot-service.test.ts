@@ -237,25 +237,6 @@ describe('ShotService', () => {
     }
   });
 
-  it('throws when no auth token is available', async () => {
-    const tmpDir = await mkdtemp(path.join(os.tmpdir(), 'withframe-shot-test-'));
-    const filePath = path.join(tmpDir, 'shot.png');
-    await writeFile(filePath, Buffer.from([1, 2, 3, 4]));
-
-    try {
-      const service = new ShotService(
-        {
-          resolveAccessToken: vi.fn(async () => null),
-        } as unknown as TokenStore,
-        {} as RegistryClient,
-      );
-
-      await expect(service.uploadShot({ file: filePath })).rejects.toThrow(/No auth token found/);
-    } finally {
-      await rm(tmpDir, { recursive: true, force: true });
-    }
-  });
-
   it('throws when file is missing', async () => {
     const tokenStore = {
       resolveAccessToken: vi.fn(async () => ({ token: 'token-123', source: 'env' as const })),
