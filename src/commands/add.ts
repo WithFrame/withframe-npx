@@ -16,7 +16,7 @@ export class AddCommand extends BaseCommand {
   }
 
   protected requiredEnvVariables(): EnvVariable[] {
-    return ['WITHFRAME_REGISTRY_URL', 'WITHFRAME_TOKEN'];
+    return ['WITHFRAME_TOKEN'];
   }
 
   protected configure(command: Command): Command {

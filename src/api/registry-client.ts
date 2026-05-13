@@ -1,4 +1,4 @@
-import { getEnvValue } from '@/lib/env';
+import { DEFAULT_REGISTRY_URL } from '@/constants';
 import { requestJson } from '@/lib/http';
 import type {
   DevicePollResponse,
@@ -58,7 +58,7 @@ const formatCallback = (url: string): CallbackUrlType => {
 
 export class RegistryClient {
   private getRegistryBaseUrl(): string {
-    return getEnvValue('WITHFRAME_REGISTRY_URL') as string;
+    return DEFAULT_REGISTRY_URL;
   }
 
   private getCallbackUrlType(): CallbackUrlType {
