@@ -4,6 +4,20 @@
   "description": "WithFrame component registry CLI",
   "type": "module",
   "main": "dist/index.mjs",
+  "homepage": "https://github.com/WithFrame/withframe-npx#readme",
+  "bugs": {
+    "url": "https://github.com/WithFrame/withframe-npx/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WithFrame/withframe-npx.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "withframe": "dist/index.mjs"
   },
@@ -19,8 +33,16 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "withframe",
+    "cli",
+    "react-native",
+    "expo",
+    "components",
+    "registry",
+    "npx"
+  ],
+  "author": "WithFrame",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^25.5.2",

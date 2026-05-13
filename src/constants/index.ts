@@ -1,6 +1,6 @@
 export const CLI_NAME = 'withframe';
 export const CLI_VERSION = '1.0.0';
-export const DEFAULT_REGISTRY_URL = 'http://localhost:3000';
+export const REGISTRY_URL = 'https://withfra.me';
 
 export const WITHFRAME_DIR = '.withframe';
 export const AUTH_FILE_NAME = 'auth.json';

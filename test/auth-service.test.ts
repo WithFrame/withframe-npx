@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import open from 'open';
 import { AuthService } from '@/api/auth-service';
 import { RegistryClient } from '@/api/registry-client';
-import { DEFAULT_REGISTRY_URL } from '@/constants';
+import { REGISTRY_URL } from '@/constants';
 import { delay } from '@/utils/delay';
 
 vi.mock('open', () => ({
@@ -23,8 +23,8 @@ describe('AuthService', () => {
       startDeviceFlow: vi.fn(async () => ({
         deviceCode: 'device-code',
         userCode: 'ABCD1234',
-        verificationUri: `${DEFAULT_REGISTRY_URL}/device`,
-        verificationUriComplete: `${DEFAULT_REGISTRY_URL}/device?user_code=ABCD1234`,
+        verificationUri: `${REGISTRY_URL}/device`,
+        verificationUriComplete: `${REGISTRY_URL}/device?user_code=ABCD1234`,
         interval: 1,
         expiresIn: 30,
       })),
@@ -44,14 +44,12 @@ describe('AuthService', () => {
 
     expect(result).toEqual({
       userCode: 'ABCD1234',
-      verificationUri: `${DEFAULT_REGISTRY_URL}/device`,
+      verificationUri: `${REGISTRY_URL}/device`,
       accessToken: 'access-token',
     });
     expect(registryClient.startDeviceFlow).toHaveBeenCalledTimes(1);
     expect(registryClient.pollDeviceFlow).toHaveBeenCalledTimes(2);
     expect(vi.mocked(delay)).toHaveBeenCalled();
-    expect(vi.mocked(open)).toHaveBeenCalledWith(
-      `${DEFAULT_REGISTRY_URL}/device?user_code=ABCD1234`,
-    );
+    expect(vi.mocked(open)).toHaveBeenCalledWith(`${REGISTRY_URL}/device?user_code=ABCD1234`);
   });
 });

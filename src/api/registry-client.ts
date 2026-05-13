@@ -1,4 +1,4 @@
-import { DEFAULT_REGISTRY_URL } from '@/constants';
+import { REGISTRY_URL } from '@/constants';
 import { requestJson } from '@/lib/http';
 import type {
   DevicePollResponse,
@@ -58,7 +58,7 @@ const formatCallback = (url: string): CallbackUrlType => {
 
 export class RegistryClient {
   private getRegistryBaseUrl(): string {
-    return DEFAULT_REGISTRY_URL;
+    return REGISTRY_URL;
   }
 
   private getCallbackUrlType(): CallbackUrlType {
