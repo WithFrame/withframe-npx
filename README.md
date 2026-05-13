@@ -18,10 +18,6 @@
 - Device login flow for CLI auth
 - Local project config via `withframe.config.json`
 
-## Requirements
-
-- Node.js `>=20`
-
 ## Installation
 
 Use directly with `npx`:
