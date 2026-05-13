@@ -1,6 +1,6 @@
 {
   "name": "withframe",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "WithFrame component registry CLI",
   "type": "module",
   "main": "dist/index.mjs",
